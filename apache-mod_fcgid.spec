@@ -1,6 +1,7 @@
 %define 	apxs	/usr/sbin/apxs
 %define		_apache1        %(rpm -q apache-devel 2> /dev/null | grep -Eq '\\-2\\.[0-9]+\\.' && echo 0 || echo 1)
 Summary:	A binary compatibility alternative to Apache module mod_fastcgi
+Summary(pl):	Binarnie kompatybilna alternatywa dla modu³u Apache'a mod_fastcgi
 Name:		apache-mod_fcgid
 Version:	0.7
 Release:	1
@@ -13,6 +14,7 @@ URL:		http://fastcgi.coremail.cn/
 BuildRequires:	%{apxs}
 BuildRequires:	apache-devel
 BuildRequires:	libtool
+BuildRequires:	sed >= 4.0
 Requires(post,preun):	%{apxs}
 Requires:	apache >= 1.3.1
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -24,6 +26,12 @@ A binary compatibility alternative to Apache module mod_fastcgi.
 mod_fcgid has a new process management strategy, which concentrates on
 reducing the number of fastcgi server, and kick out the corrupt
 fastcgi server as soon as possible.
+
+%description -l pl
+Binarnie kompatybilna alternatywa dla modu³u Apache'a mod_fastcgi.
+mod_fcgid to nowa strategia zarz±dzania procesami, koncentruj±ca siê
+na redukcji liczby serwerów fastcgi i usuwaniu uszkodzonych serwerów
+fastcgi najszybciej jak to mo¿liwe.
 
 %prep
 %setup -q -n mod_fcgid
