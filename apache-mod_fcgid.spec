@@ -9,7 +9,7 @@ License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://fastcgi.coremail.cn/mod_%{mod_name}.%{version}.tar.gz
 # Source0-md5:	2cedb4c88ecf2c6754b237d27297aa1d
-Source1:	70_mod_%{mod_name}.conf
+Source1:	%{name}.conf
 URL:		http://fastcgi.coremail.cn/
 BuildRequires:	%{apxs}
 BuildRequires:	apache-devel >= 2
