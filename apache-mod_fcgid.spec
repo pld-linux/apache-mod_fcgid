@@ -1,15 +1,15 @@
-%define 	apxs	/usr/sbin/apxs
-%define		_apache1        %(rpm -q apache-devel 2> /dev/null | grep -Eq '\\-2\\.[0-9]+\\.' && echo 0 || echo 1)
+%define		mod_name	fcgid
+%define 	apxs		/usr/sbin/apxs
 Summary:	A binary compatibility alternative to Apache module mod_fastcgi
 Summary(pl):	Binarnie kompatybilna alternatywa dla modu³u Apache'a mod_fastcgi
-Name:		apache-mod_fcgid
-Version:	0.74
+Name:		apache-mod_%{mod_name}
+Version:	1.00
 Release:	1
 License:	distributable
 Group:		Networking/Daemons
-Source0:	http://fastcgi.coremail.cn/mod_fcgid.%{version}.tar.gz
-# Source0-md5:	50c625f238c82cba3ed232cec3d3ca95
-Source1:	70_mod_fcgid.conf
+Source0:	http://fastcgi.coremail.cn/mod_%{mod_name}.%{version}.tar.gz
+# Source0-md5:	960f39ac6723daf226ee2e612d4612c6
+Source1:	70_mod_%{mod_name}.conf
 URL:		http://fastcgi.coremail.cn/
 BuildRequires:	%{apxs}
 BuildRequires:	apache-devel
@@ -19,12 +19,13 @@ Requires(post,preun):	%{apxs}
 Requires:	apache >= 1.3.1
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define         _libexecdir     %{_libdir}/apache
+%define		_sysconfdir	%(%{apxs} -q SYSCONFDIR)
+%define		_pkglibdir	%(%{apxs} -q LIBEXECDIR)
 
 %description
 A binary compatibility alternative to Apache module mod_fastcgi.
-mod_fcgid has a new process management strategy, which concentrates on
-reducing the number of fastcgi server, and kick out the corrupt
+mod_fcgid has a new process management strategy, which concentrates
+on reducing the number of fastcgi server, and kick out the corrupt
 fastcgi server as soon as possible.
 
 %description -l pl
@@ -34,20 +35,20 @@ na redukcji liczby serwerów fastcgi i usuwaniu uszkodzonych serwerów
 fastcgi najszybciej jak to mo¿liwe.
 
 %prep
-%setup -q -n mod_fcgid.%{version}
+%setup -q -n mod_%{mod_name}.%{version}
 
 %build
-sed -i -e 's#top_dir.*=.*#top_dir = %{_libexecdir}#g' Makefile
-echo "INCLUDES=`apr-config --includes` `apu-config --includes` -I%{_includedir}/apache" >> Makefile
-%{__make}
+%{__make} \
+	top_dir=%{_pkglibdir} \
+	APXS=%{_apxs} \
+	INCLUDES="-I%(%{apxs} -q INCLUDEDIR)"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_libexecdir},%{_htmldocdir}}
-install -d $RPM_BUILD_ROOT%{_sysconfdir}/httpd/httpd.conf
+install -d $RPM_BUILD_ROOT{%{_pkglibdir},%{_sysconfdir}/httpd.conf}
 
-libtool --mode=install install mod_fcgid.la $RPM_BUILD_ROOT%{_libexecdir}
-install %{SOURCE1} $RPM_BUILD_ROOT/%{_sysconfdir}/httpd/httpd.conf/70_mod_fcgid.conf
+install .libs/mod_%{mod_name}.so $RPM_BUILD_ROOT%{_pkglibdir}
+install %{SOURCE1} $RPM_BUILD_ROOT/%{_sysconfdir}/httpd.conf/70_mod_%{mod_name}.conf
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -69,4 +70,4 @@ fi
 %files
 %defattr(644,root,root,755)
 %doc AUTHOR ChangeLog
-%attr(755,root,root) %{_libexecdir}/*.so
+%attr(755,root,root) %{_pkglibdir}/*.so
