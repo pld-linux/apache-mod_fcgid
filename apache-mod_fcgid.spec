@@ -4,7 +4,7 @@ Summary:	A binary compatibility alternative to Apache module mod_fastcgi
 Summary(pl):	Binarnie kompatybilna alternatywa dla modu³u Apache'a mod_fastcgi
 Name:		apache-mod_%{mod_name}
 Version:	1.01
-Release:	1
+Release:	2
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://fastcgi.coremail.cn/mod_%{mod_name}.%{version}.tar.gz
