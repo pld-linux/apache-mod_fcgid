@@ -13,11 +13,11 @@ Source1:	%{name}.conf
 Patch0:		%{name}-apr-status-is-success.patch
 URL:		http://fastcgi.coremail.cn/
 BuildRequires:	%{apxs}
-BuildRequires:	apache-devel >= 2
+BuildRequires:	apache-devel >= 2.0.52-2
 BuildRequires:	libtool
 BuildRequires:	sed >= 4.0
 Requires(post,preun):	%{apxs}
-Requires:	apache >= 2
+Requires:	apache >= 2.0.52-2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_sysconfdir	%(%{apxs} -q SYSCONFDIR)
