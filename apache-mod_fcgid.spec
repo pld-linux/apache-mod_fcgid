@@ -9,7 +9,7 @@ License:	distributable
 Group:		Networking/Daemons
 Source0:	http://fastcgi.coremail.cn/mod_fcgid.%{version}.tar.gz
 # Source0-md5:	1bfdf0274caf9ecaee089e4b3f70326e
-Source1:	70_mod_fastcgi.conf
+Source1:	70_mod_fcgid.conf
 URL:		http://fastcgi.coremail.cn/
 BuildRequires:	%{apxs}
 BuildRequires:	apache-devel
