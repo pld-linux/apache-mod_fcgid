@@ -3,12 +3,12 @@
 Summary:	A binary compatibility alternative to Apache module mod_fastcgi
 Summary(pl):	Binarnie kompatybilna alternatywa dla modu³u Apache'a mod_fastcgi
 Name:		apache-mod_fcgid
-Version:	0.7
+Version:	0.74
 Release:	1
 License:	distributable
 Group:		Networking/Daemons
 Source0:	http://fastcgi.coremail.cn/mod_fcgid.%{version}.tar.gz
-# Source0-md5:	1bfdf0274caf9ecaee089e4b3f70326e
+# Source0-md5:	50c625f238c82cba3ed232cec3d3ca95
 Source1:	70_mod_fcgid.conf
 URL:		http://fastcgi.coremail.cn/
 BuildRequires:	%{apxs}
@@ -34,7 +34,7 @@ na redukcji liczby serwerów fastcgi i usuwaniu uszkodzonych serwerów
 fastcgi najszybciej jak to mo¿liwe.
 
 %prep
-%setup -q -n mod_fcgid
+%setup -q -n mod_fcgid.%{version}
 
 %build
 sed -i -e 's#top_dir.*=.*#top_dir = %{_libexecdir}#g' Makefile
