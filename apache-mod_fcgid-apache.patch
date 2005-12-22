@@ -1,0 +1,10 @@
+--- mod_fcgid.1.03/arch/unix/fcgid_proc_unix.c~	2004-11-03 21:54:14.000000000 +0200
++++ mod_fcgid.1.03/arch/unix/fcgid_proc_unix.c	2005-12-22 02:19:49.000000000 +0200
+@@ -8,6 +8,7 @@
+ #include "apr_portable.h"
+ #include "apr_pools.h"
+ #include "apr_network_io.h"
++#include "mpm_common.h"
+ #include "util_script.h"
+ #include "unixd.h"
+ #include "mod_core.h"

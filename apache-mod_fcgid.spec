@@ -4,13 +4,14 @@ Summary:	A binary compatibility alternative to Apache module mod_fastcgi
 Summary(pl):	Binarnie kompatybilna alternatywa dla modu³u Apache'a mod_fastcgi
 Name:		apache-mod_%{mod_name}
 Version:	1.03
-Release:	2
+Release:	3
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://fastcgi.coremail.cn/mod_%{mod_name}.%{version}.tar.gz
 # Source0-md5:	dbcd5c96f8d6c6fcb7471abf527d176f
 Source1:	%{name}.conf
 Patch0:		%{name}-apr-status-is-success.patch
+Patch1:		%{name}-apache.patch
 URL:		http://fastcgi.coremail.cn/
 BuildRequires:	%{apxs}
 BuildRequires:	apache-devel >= 2.0.52-2
@@ -38,11 +39,12 @@ fastcgi najszybciej jak to mo¿liwe.
 %prep
 %setup -q -n mod_%{mod_name}.%{version}
 %patch0 -p1
+%patch1 -p1
 
 %build
 %{__make} \
 	top_dir=%{_pkglibdir} \
-	APXS=%{_apxs} \
+	APXS=%{apxs} \
 	INCLUDES="-I%(%{apxs} -q INCLUDEDIR)"
 
 %install
