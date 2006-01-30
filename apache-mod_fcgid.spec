@@ -16,6 +16,7 @@ URL:		http://fastcgi.coremail.cn/
 BuildRequires:	%{apxs}
 BuildRequires:	apache-devel >= 2.0.52-2
 BuildRequires:	libtool
+BuildRequires:	rpmbuild(macros) >= 1.268
 Requires:	apache(modules-api) = %apache_modules_api
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -56,15 +57,11 @@ install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/httpd.conf/70_mod_%{mod_name}.c
 rm -rf $RPM_BUILD_ROOT
 
 %post
-if [ -f /var/lock/subsys/httpd ]; then
-	/etc/rc.d/init.d/httpd restart 1>&2
-fi
+%service -q httpd restart
 
 %preun
 if [ "$1" = "0" ]; then
-	if [ -f /var/lock/subsys/httpd ]; then
-		/etc/rc.d/init.d/httpd restart 1>&2
-	fi
+	%service -q httpd restart
 fi
 
 %files
