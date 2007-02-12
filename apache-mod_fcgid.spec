@@ -1,7 +1,7 @@
 %define		mod_name	fcgid
 %define 	apxs		/usr/sbin/apxs
 Summary:	A binary compatibility alternative to Apache module mod_fastcgi
-Summary(pl):	Binarnie kompatybilna alternatywa dla modu³u Apache'a mod_fastcgi
+Summary(pl.UTF-8):   Binarnie kompatybilna alternatywa dla moduÅ‚u Apache'a mod_fastcgi
 Name:		apache-mod_%{mod_name}
 Version:	1.03
 Release:	3
@@ -29,11 +29,11 @@ mod_fcgid has a new process management strategy, which concentrates on
 reducing the number of fastcgi server, and kick out the corrupt
 fastcgi server as soon as possible.
 
-%description -l pl
-Binarnie kompatybilna alternatywa dla modu³u Apache'a mod_fastcgi.
-mod_fcgid to nowa strategia zarz±dzania procesami, koncentruj±ca siê
-na redukcji liczby serwerów fastcgi i usuwaniu uszkodzonych serwerów
-fastcgi najszybciej jak to mo¿liwe.
+%description -l pl.UTF-8
+Binarnie kompatybilna alternatywa dla moduÅ‚u Apache'a mod_fastcgi.
+mod_fcgid to nowa strategia zarzÄ…dzania procesami, koncentrujÄ…ca siÄ™
+na redukcji liczby serwerÃ³w fastcgi i usuwaniu uszkodzonych serwerÃ³w
+fastcgi najszybciej jak to moÅ¼liwe.
 
 %prep
 %setup -q -n mod_%{mod_name}.%{version}
