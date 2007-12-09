@@ -13,7 +13,7 @@ Source1:	%{name}.conf
 Patch0:		%{name}-apr-status-is-success.patch
 Patch1:		%{name}-apache.patch
 URL:		http://fastcgi.coremail.cn/
-BuildRequires:	apache-apxs >= 2.0.52-2
+BuildRequires:	%{apxs}
 BuildRequires:	apache-devel >= 2.0.52-2
 BuildRequires:	libtool
 BuildRequires:	rpmbuild(macros) >= 1.268
