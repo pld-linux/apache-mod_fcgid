@@ -6,7 +6,7 @@ Name:		apache-mod_%{mod_name}
 Version:	1.03
 Release:	3
 License:	GPL v2
-Group:		Networking/Daemons
+Group:		Networking/Daemons/HTTP
 Source0:	http://fastcgi.coremail.cn/mod_%{mod_name}.%{version}.tar.gz
 # Source0-md5:	dbcd5c96f8d6c6fcb7471abf527d176f
 Source1:	%{name}.conf
