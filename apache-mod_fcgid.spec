@@ -3,15 +3,14 @@
 Summary:	A binary compatibility alternative to Apache module mod_fastcgi
 Summary(pl.UTF-8):	Binarnie kompatybilna alternatywa dla modułu Apache'a mod_fastcgi
 Name:		apache-mod_%{mod_name}
-Version:	2.2
-Release:	3
+Version:	2.3.5
+Release:	1
 License:	GPL v2
 Group:		Networking/Daemons/HTTP
-Source0:	http://dl.sourceforge.net/mod-fcgid/mod_%{mod_name}.%{version}.tar.gz
-# Source0-md5:	ce7d7b16e69643dbd549d43d85025983
+Source0:	http://www.apache.org/dist/httpd/mod_fcgid/mod_%{mod_name}-%{version}.tar.gz
+# Source0-md5:	82b5bec1ed1c0fc106d5271075641ef9
 Source1:	%{name}.conf
-Patch0:		%{name}-suexec-path.patch
-URL:		http://fastcgi.coremail.cn/
+URL:		http://httpd.apache.org/mod_fcgid/
 BuildRequires:	%{apxs}
 BuildRequires:	apache-devel >= 2.0.52-2
 BuildRequires:	libtool
@@ -35,10 +34,10 @@ na redukcji liczby serwerów fastcgi i usuwaniu uszkodzonych serwerów
 fastcgi najszybciej jak to możliwe.
 
 %prep
-%setup -q -n mod_%{mod_name}.%{version}
-%patch0 -p1
+%setup -q -n mod_%{mod_name}-%{version}
 
 %build
+APXS=%{apxs} ./configure.apxs
 %{__make} \
 	top_dir=%{_pkglibdir} \
 	APXS=%{apxs} \
@@ -48,7 +47,7 @@ fastcgi najszybciej jak to możliwe.
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_pkglibdir},%{_sysconfdir}}
 
-install .libs/mod_%{mod_name}.so $RPM_BUILD_ROOT%{_pkglibdir}
+install modules/fcgid/.libs/mod_%{mod_name}.so $RPM_BUILD_ROOT%{_pkglibdir}
 install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/70_mod_%{mod_name}.conf
 
 %clean
@@ -64,6 +63,6 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc AUTHOR ChangeLog
+%doc CHANGES-FCGID LICENSE-FCGID NOTICE-FCGID README-FCGID STATUS-FCGID
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/*_mod_%{mod_name}.conf
 %attr(755,root,root) %{_pkglibdir}/*.so
