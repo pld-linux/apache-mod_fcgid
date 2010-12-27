@@ -1,48 +1,17 @@
-diff -ur mod_fcgid.2.2.orig/arch/unix/fcgid_proc_unix.c mod_fcgid.2.2/arch/unix/fcgid_proc_unix.c
---- mod_fcgid.2.2.orig/arch/unix/fcgid_proc_unix.c	2007-07-31 11:09:19.000000000 +0200
-+++ mod_fcgid.2.2/arch/unix/fcgid_proc_unix.c	2009-06-05 15:01:05.000000000 +0200
-@@ -30,6 +30,7 @@
- static int g_process_counter = 0;
- static apr_pool_t *g_inode_cginame_map = NULL;
- static const char *g_socket_dir = NULL;
-+static const char *g_suexec_cmd = NULL;
+diff -ur mod_fcgid-2.3.6.orig//modules/fcgid/fcgid_conf.c mod_fcgid-2.3.6/modules/fcgid/fcgid_conf.c
+--- mod_fcgid-2.3.6.orig//modules/fcgid/fcgid_conf.c	2010-11-04 12:43:30.000000000 +0100
++++ mod_fcgid-2.3.6/modules/fcgid/fcgid_conf.c	2010-12-27 11:20:47.928883235 +0100
+@@ -104,6 +104,7 @@
+     config->busy_timeout = DEFAULT_BUSY_TIMEOUT;
+     config->idle_timeout = DEFAULT_IDLE_TIMEOUT;
+     config->proc_lifetime = DEFAULT_PROC_LIFETIME;
++    config->suexec_cmd = SUEXEC_BIN;
  
- static apr_status_t ap_unix_create_privileged_process(apr_proc_t * newproc,
- 													  const char *progname,
-@@ -79,8 +80,8 @@
- 	}
- 	/* allocate space for 4 new args, the input args, and a null terminator */
- 	newargs = apr_palloc(p, sizeof(char *) * (i + 4));
--	newprogname = SUEXEC_BIN;
--	newargs[0] = SUEXEC_BIN;
-+	newprogname = g_suexec_cmd;
-+	newargs[0] = g_suexec_cmd;
- 	newargs[1] = execuser;
- 	newargs[2] = execgroup;
- 	newargs[3] = apr_pstrdup(p, argv0);
-@@ -179,6 +180,8 @@
- 						procinfo->main_server->process->pconf);
- 	}
- 
-+	if (!g_suexec_cmd)
-+		g_suexec_cmd = get_suexec_cmd(procinfo->main_server);
- 	if (!g_socket_dir)
- 		g_socket_dir = get_socketpath(procinfo->main_server);
- 	if (!g_inode_cginame_map || !g_socket_dir) {
-diff -ur mod_fcgid.2.2.orig/fcgid_conf.c mod_fcgid.2.2/fcgid_conf.c
---- mod_fcgid.2.2.orig/fcgid_conf.c	2007-07-31 11:09:20.000000000 +0200
-+++ mod_fcgid.2.2/fcgid_conf.c	2009-06-05 15:03:19.000000000 +0200
-@@ -61,6 +61,7 @@
- 	config->max_requests_per_process = DEFAULT_MAX_REQUESTS_PER_PROCESS;
- 	config->max_request_len = DEFAULT_MAX_REQUEST_LEN;
- 	config->max_mem_request_len = DEFAULT_MAX_MEM_REQUEST_LEN;
-+	config->suexec_cmd = SUEXEC_BIN;
+     return config;
  }
+@@ -1078,3 +1079,22 @@
  
- void *create_fcgid_server_config(apr_pool_t * p, server_rec * s)
-@@ -846,3 +847,22 @@
- 
- 	return NULL;
+     cmdopts->cmdenv = NULL;
  }
 +
 +const char *set_suexec_cmd(cmd_parms * cmd, void *dummy, const char *arg)
@@ -63,36 +32,79 @@ diff -ur mod_fcgid.2.2.orig/fcgid_conf.c mod_fcgid.2.2/fcgid_conf.c
 +		ap_get_module_config(s->module_config, &fcgid_module);
 +	return config->suexec_cmd;
 +}
-diff -ur mod_fcgid.2.2.orig/fcgid_conf.h mod_fcgid.2.2/fcgid_conf.h
---- mod_fcgid.2.2.orig/fcgid_conf.h	2007-07-31 11:09:22.000000000 +0200
-+++ mod_fcgid.2.2/fcgid_conf.h	2009-06-05 15:03:51.000000000 +0200
-@@ -43,6 +43,7 @@
- 	int ipc_comm_timeout;
- 	int busy_timeout;
- 	int php_fix_pathinfo_enable;
-+	char *suexec_cmd;
+diff -ur mod_fcgid-2.3.6.orig//modules/fcgid/fcgid_conf.h mod_fcgid-2.3.6/modules/fcgid/fcgid_conf.h
+--- mod_fcgid-2.3.6.orig//modules/fcgid/fcgid_conf.h	2010-11-04 13:14:15.000000000 +0100
++++ mod_fcgid-2.3.6/modules/fcgid/fcgid_conf.h	2010-12-27 11:22:07.160243449 +0100
+@@ -98,6 +98,7 @@
+     int idle_timeout_set;
+     int proc_lifetime;
+     int proc_lifetime_set;
++    char *suexec_cmd;
  } fcgid_server_conf;
  
  typedef struct {
-@@ -160,6 +161,9 @@
- 							   const char *wrapper, const char *extension);
- fcgid_wrapper_conf *get_wrapper_info(const char *cgipath, request_rec * r);
+@@ -225,6 +226,9 @@
+                                const char *wrapper, const char *extension, const char* virtual);
+ fcgid_cmd_conf *get_wrapper_info(const char *cgipath, request_rec * r);
  
 +const char *set_suexec_cmd(cmd_parms * cmd, void *dummy, const char *arg);
 +const char *get_suexec_cmd(server_rec * s);
 +
  const char *set_authenticator_info(cmd_parms * cmd, void *config,
- 								   const char *arg);
+                                    const char *arg);
  const char *set_authenticator_authoritative(cmd_parms * cmd,
-diff -ur mod_fcgid.2.2.orig/mod_fcgid.c mod_fcgid.2.2/mod_fcgid.c
---- mod_fcgid.2.2.orig/mod_fcgid.c	2007-07-31 11:09:22.000000000 +0200
-+++ mod_fcgid.2.2/mod_fcgid.c	2009-06-05 15:06:51.000000000 +0200
-@@ -594,6 +594,8 @@
- 	AP_INIT_TAKE12("FCGIWrapper", set_wrapper_config, NULL,
- 				   RSRC_CONF | ACCESS_CONF | OR_FILEINFO,
- 				   "The CGI wrapper setting"),
-+	AP_INIT_TAKE1("FastCgiSuexec", set_suexec_cmd, NULL, RSRC_CONF,
-+				   "Path to FastCGI SuEXEC command"),
- 	AP_INIT_TAKE1("PHP_Fix_Pathinfo_Enable",
- 				  set_php_fix_pathinfo_enable,
- 				  NULL, RSRC_CONF,
+diff -ur mod_fcgid-2.3.6.orig//modules/fcgid/fcgid_proc_unix.c mod_fcgid-2.3.6/modules/fcgid/fcgid_proc_unix.c
+--- mod_fcgid-2.3.6.orig//modules/fcgid/fcgid_proc_unix.c	2010-06-14 21:39:40.000000000 +0200
++++ mod_fcgid-2.3.6/modules/fcgid/fcgid_proc_unix.c	2010-12-27 11:32:29.586735705 +0100
+@@ -61,6 +61,7 @@
+ } fcgid_namedpipe_handle;
+ 
+ static int g_process_counter = 0;
++static const char *g_suexec_cmd = NULL;
+ 
+ static apr_status_t ap_unix_create_privileged_process(apr_proc_t *newproc,
+                                                       const char *progname,
+@@ -107,8 +108,8 @@
+     }
+     /* allocate space for 4 new args, the input args, and a null terminator */
+     newargs = apr_palloc(p, sizeof(char *) * (i + 4));
+-    newprogname = SUEXEC_BIN;
+-    newargs[0] = SUEXEC_BIN;
++    newprogname = g_suexec_cmd;
++    newargs[0] = g_suexec_cmd;
+     newargs[1] = execuser;
+     newargs[2] = execgroup;
+     newargs[3] = apr_pstrdup(p, argv0);
+@@ -222,6 +223,9 @@
+     }
+     wargv[argc] = NULL;
+ 
++    if (!g_suexec_cmd)
++        g_suexec_cmd = get_suexec_cmd(procinfo->main_server);
++
+     /* 
+        Create UNIX domain socket before spawn 
+      */
+diff -ur mod_fcgid-2.3.6.orig//modules/fcgid/mod_fcgid.c mod_fcgid-2.3.6/modules/fcgid/mod_fcgid.c
+--- mod_fcgid-2.3.6.orig//modules/fcgid/mod_fcgid.c	2010-10-29 01:53:29.000000000 +0200
++++ mod_fcgid-2.3.6/modules/fcgid/mod_fcgid.c	2010-12-27 11:36:41.468977537 +0100
+@@ -892,6 +892,9 @@
+     AP_INIT_TAKE123("FcgidWrapper", set_wrapper_config, NULL,
+                     RSRC_CONF | ACCESS_CONF | OR_FILEINFO,
+                     "The CGI wrapper file an optional URL suffix and an optional flag"),
++    AP_INIT_TAKE1("FcgidCgiSuexec", set_suexec_cmd, NULL,
++                  RSRC_CONF,
++                  "Path to FastCGI SuEXEC command"),
+     AP_INIT_TAKE1("FcgidZombieScanInterval", set_zombie_scan_interval, NULL,
+                   RSRC_CONF,
+                   "scan interval for zombie process"),
+@@ -941,6 +944,9 @@
+     AP_INIT_TAKE123("FCGIWrapper", set_wrapper_config, NULL,
+                     RSRC_CONF | ACCESS_CONF | OR_FILEINFO,
+                     "Deprecated - Use 'FcgidWrapper' instead"),
++    AP_INIT_TAKE1("FastCgiSuexec", set_suexec_cmd, NULL,
++                  RSRC_CONF,
++                  "Deprecated - Use 'FcgidCgiSuexec' instead"),
+     AP_INIT_TAKE1("IdleScanInterval", set_idle_scan_interval, NULL,
+                   RSRC_CONF,
+                   "Deprecated - Use 'FcgidIdleScanInterval' instead"),
