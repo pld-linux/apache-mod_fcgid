@@ -10,6 +10,7 @@ Group:		Networking/Daemons/HTTP
 Source0:	http://www.apache.org/dist/httpd/mod_fcgid/mod_%{mod_name}-%{version}.tar.gz
 # Source0-md5:	fbfc115eb47cd9bda91269743aba5e83
 Source1:	%{name}.conf
+Patch0:		%{name}-suexec-path.patch
 URL:		http://httpd.apache.org/mod_fcgid/
 BuildRequires:	%{apxs}
 BuildRequires:	apache-devel >= 2.0.52-2
@@ -35,6 +36,7 @@ fastcgi najszybciej jak to możliwe.
 
 %prep
 %setup -q -n mod_%{mod_name}-%{version}
+%patch0 -p1
 
 %build
 APXS=%{apxs} ./configure.apxs
