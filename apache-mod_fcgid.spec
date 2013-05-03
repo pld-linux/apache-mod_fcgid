@@ -1,14 +1,14 @@
 %define		mod_name	fcgid
-%define 	apxs		/usr/sbin/apxs
+%define		apxs		/usr/sbin/apxs
 Summary:	A binary compatibility alternative to Apache module mod_fastcgi
 Summary(pl.UTF-8):	Binarnie kompatybilna alternatywa dla modułu Apache'a mod_fastcgi
 Name:		apache-mod_%{mod_name}
-Version:	2.3.6
-Release:	0.1
+Version:	2.3.7
+Release:	1
 License:	GPL v2
 Group:		Networking/Daemons/HTTP
-Source0:	http://www.apache.org/dist/httpd/mod_fcgid/mod_%{mod_name}-%{version}.tar.gz
-# Source0-md5:	fbfc115eb47cd9bda91269743aba5e83
+Source0:	http://www.apache.org/dist/httpd/mod_fcgid/mod_%{mod_name}-%{version}.tar.bz2
+# Source0-md5:	5952c93dc16b42264a4bf2a54757fc08
 Source1:	%{name}.conf
 Patch0:		%{name}-suexec-path.patch
 URL:		http://httpd.apache.org/mod_fcgid/
