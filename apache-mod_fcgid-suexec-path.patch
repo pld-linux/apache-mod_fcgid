@@ -82,8 +82,8 @@ diff -ur mod_fcgid-2.3.6.orig//modules/fcgid/fcgid_proc_unix.c mod_fcgid-2.3.6/m
 +    if (!g_suexec_cmd)
 +        g_suexec_cmd = get_suexec_cmd(procinfo->main_server);
 +
-     /* 
-        Create UNIX domain socket before spawn 
+     /*
+        Create UNIX domain socket before spawn
       */
 diff -ur mod_fcgid-2.3.6.orig//modules/fcgid/mod_fcgid.c mod_fcgid-2.3.6/modules/fcgid/mod_fcgid.c
 --- mod_fcgid-2.3.6.orig//modules/fcgid/mod_fcgid.c	2010-10-29 01:53:29.000000000 +0200
