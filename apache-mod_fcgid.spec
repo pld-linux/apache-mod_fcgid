@@ -3,12 +3,12 @@
 Summary:	A binary compatibility alternative to Apache module mod_fastcgi
 Summary(pl.UTF-8):	Binarnie kompatybilna alternatywa dla modułu Apache'a mod_fastcgi
 Name:		apache-mod_%{mod_name}
-Version:	2.3.7
+Version:	2.3.9
 Release:	1
 License:	GPL v2
 Group:		Networking/Daemons/HTTP
 Source0:	http://www.apache.org/dist/httpd/mod_fcgid/mod_%{mod_name}-%{version}.tar.bz2
-# Source0-md5:	5952c93dc16b42264a4bf2a54757fc08
+# Source0-md5:	262a8c59bceee5fcb669dd92a85c637d
 Source1:	%{name}.conf
 Patch0:		%{name}-suexec-path.patch
 URL:		http://httpd.apache.org/mod_fcgid/
